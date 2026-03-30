@@ -1,0 +1,174 @@
+ROLE
+You are a senior full-stack web developer and UI designer. Build a production-ready website for Velda Cable Technics with a modern, luxury, dark aesthetic.
+
+GOAL
+Create a fast, SEO-friendly, responsive website (desktop first, perfect mobile too) with:
+1) Interactive product catalog (components + assembled cables grouped by category, incl. fall protection, suspension kits, QS systems, etc.)
+2) AI-guided quote request tool that helps customers select the right steel cable + end fittings for their application, then generates a structured quote request.
+3) Sector pages (digital interactive flyers per sector) with examples, use cases, and recommended product families.
+4) About page with team/company story + an interactive, scrollable timeline of milestones.
+5) Contact page.
+
+BRAND & STYLE
+- Design: premium, modern, dark, minimal, “industrial luxury”.
+- Base palette: deep charcoal/near-black backgrounds.
+- Accents: Velda green #92AF2B and Velda gray #75726E.
+- Typography: clean, technical, high-end (use Inter or similar; keep strong hierarchy).
+- UI: soft shadows, subtle gradients, crisp cards, micro animations, no clutter.
+- Always keep the brand green as accent for CTAs, highlights, selected filters, and key icons.
+
+CONTENT SOURCES I WILL UPLOAD (PDFs)
+I will upload these PDFs into the Replit project. Use them as content sources and as guidance for product structure:
+- "2025 - Presentation - Velda Cable Technics.pdf" (company info, sectors, milestones, new developments)
+- "EN-Suspension systems.pdf" (cables, suspension systems, product references, load tables)
+- "EN-Catalogue-QS.pdf" (QS system finishes, working loads, angle limits, guidance)
+- "Flyer Building-EN.pdf" and "Flyer Lighting-EN.pdf" (sector flyer content)
+- "Velda_Website_05.pdf" (old website structure as reference, not the design)
+- "catalog.pdf" (Wire Rope Mate catalog: use ONLY as UI inspiration for an interactive catalog. Do not copy text/images; only mimic the navigation/UX patterns.)
+
+IMPORTANT
+- Do NOT copy Wire Rope Mate content or images. Only use it to inspire the interactive catalog UX layout.
+- Velda catalog must contain ONLY Velda items and references.
+- Keep all critical technical limits and disclaimers visible where relevant (especially in the AI quote tool).
+
+TECH STACK (Replit-friendly)
+- Next.js (App Router) + TypeScript
+- TailwindCSS + shadcn/ui
+- Database: SQLite (Prisma) for MVP (easy on Replit). Keep schema upgradeable to Postgres later.
+- Search: simple server-side filtering first; optionally add SQLite FTS later.
+- Email: Resend or SMTP (env vars), send quote requests to sales inbox and CC requester.
+- AI: OpenAI API via server route (env var OPENAI_API_KEY). Build an “AI Quote Assistant” chat UI with guardrails and a final structured output.
+
+INFORMATION ARCHITECTURE (PAGES)
+Top navigation:
+- Products (Catalog)
+- Sectors
+- AI Quote Tool
+- About
+- Contact
+
+Homepage sections:
+1) Hero: “Quality cables since 1935” + one strong CTA to Catalog and one to AI Quote Tool.
+2) Proof metrics (numbers from presentation).
+3) Product families (cards): Technical Cables, Accessories, Bowden Cables, Steel Cable on Roll, Suspension Systems, Quick Suspension (QS), Assembled Kits.
+4) Sectors grid (cards).
+5) New developments teaser (from presentation).
+6) Footer: contact details, quick links, socials placeholders.
+
+CATALOG REQUIREMENTS (INTERACTIVE)
+- Catalog landing: category tiles + quick search.
+- Category view: filter sidebar (material, diameter, construction, working load range, finish type, application tags, indoor/outdoor).
+- Product cards: image placeholder, name, short tags, key specs, CTA “View details”.
+- Product detail page:
+  - Photos gallery (use placeholders now, but support adding real images later).
+  - Technical specs table (fields depend on product type).
+  - Working load info and safety notes (where applicable).
+  - Related items (finishes that match a cable, compatible systems, “often used in sector X”).
+
+DATA MODEL (PRISMA)
+Create a flexible schema:
+- Product
+  - id, slug, name, type (Cable | SuspensionSystem | QSSystem | Finish | AssemblyKit | Accessory)
+  - category, tags[]
+  - descriptionShort, descriptionLong
+  - specs JSON (key-value)
+  - images[]
+  - documents[] (PDF links)
+  - compatibility[] (relations)
+- Sector
+  - id, slug, name, intro, useCases[], galleryImages[]
+  - recommendedProductSlugs[]
+- TimelineEvent
+  - year, title, description
+- QuoteRequest
+  - contact fields + application fields + AI transcript + recommended configuration JSON + status
+
+INITIAL SEED DATA
+Build a seed script that preloads:
+- Company milestones from the presentation (timeline).
+- Key product families and at least:
+  - Cable diameters + constructions + sample reference codes from the suspension systems PDF.
+  - QS system variants and finishes + their working loads and angle limits from QS PDF.
+  - Sector pages: Building and Lighting content from flyers; plus placeholders for other sectors named in the presentation.
+
+AI QUOTE TOOL (CORE FEATURE)
+Build a guided flow with 2 modes:
+A) Wizard form (structured)
+B) AI chat assistant (conversational)
+Both must converge into a FINAL structured “Recommended Configuration” object plus a “Quote Request Summary”.
+
+Wizard fields:
+- Application type (Lighting suspension, Safety/fall protection, HVAC/ducts, Signage, Architectural cables, Industrial, Other)
+- Indoor/Outdoor, dry/wet environment, corrosion requirement (galvanised vs stainless)
+- Load (kg) and number of suspension points
+- Cable length (m)
+- Angle of suspension (0/15/30/45/60) if applicable
+- Need for adjustability (yes/no)
+- Required end fittings (choose or “not sure”)
+- Certifications/constraints (optional)
+- Quantity
+- Attach drawing/spec (optional file upload placeholder)
+
+AI assistant guardrails:
+- Always ask clarifying questions until enough info is collected.
+- Must follow known constraints (examples):
+  - QS products: indoor dry environment only; never for lifting; never exceed 60°; working load changes under angle.
+  - Use safety factors and show conservative recommendations.
+- Must output:
+  1) Recommended cable type and diameter (with reasoning)
+  2) Suggested finishes/components
+  3) Warnings and assumptions
+  4) A clean bill of materials style list
+
+After completion:
+- Show a review screen (editable fields)
+- Submit creates QuoteRequest record + sends email to sales with structured JSON + human-readable summary.
+- Thank-you page with reference number.
+
+SECTORS (DIGITAL FLYERS)
+Create a Sectors overview page with tiles.
+Each sector page template:
+- Hero image placeholder + short intro
+- “Typical applications” bullet list
+- “Common solutions” (product families and examples)
+- “Gallery” grid (placeholders)
+- CTA: “Get guidance” -> AI Quote Tool prefilled with that sector
+
+At minimum implement:
+- Building sector page based on flyer content.
+- Lighting sector page based on flyer content.
+Add placeholders for: Medical, Safety, Industry, Automotive, Agricultural, Sport & Recreation, Outdoor, Lighting & Acoustics, Signage & Shopfitting.
+
+ABOUT PAGE
+- Company intro + strengths + values.
+- Add key metrics (80+ years, 5000+ projects, 250M+ meters yearly).
+- Interactive scrollable timeline component:
+  - horizontal scroll on desktop, vertical on mobile
+  - milestones with year badges and animation
+- Team section: placeholder cards for CEO/management/sales/engineering (editable in seed data).
+
+CONTACT PAGE
+- Contact form with categories: general, quote, technical question, callback request.
+- Show address, phone, email.
+- Map embed placeholder.
+
+ADMIN (MVP)
+Create a simple protected “/admin” area (password via env var for MVP) to:
+- Add/edit products (basic fields + specs JSON)
+- Upload images (store locally for MVP)
+- Manage sectors content
+- View quote requests and export as CSV/JSON
+
+NON-FUNCTIONAL REQUIREMENTS
+- Performance: optimize images, lazy load, server components where useful.
+- SEO: meta tags, OpenGraph, schema.org for Organization and Product.
+- Accessibility: keyboard-friendly, good contrast, aria labels.
+- Clean code, clear folder structure, README with run instructions and env vars.
+
+DELIVERABLES
+- Full working Next.js project in Replit
+- Prisma schema + migrations + seed
+- Polished UI and all pages live
+- AI Quote Tool functional with OpenAI key via env var
+- Email sending functional via env var
+- README with setup steps
